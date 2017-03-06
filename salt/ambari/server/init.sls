@@ -26,29 +26,3 @@ ambari-server-{{ambari.version}}-pkg:
     - version: {{ version_mapping.get(ambari.version) }}
 {% endif %}
 
-ambari-server-properties:
-  file.managed:
-    - name: /etc/ambari-server/conf/ambari.properties
-    - source: salt://ambari/server/files/ambari.properties
-    - template: jinja
-    - user: {{ ambari_user }}
-    - group: root
-    - permission: 0644
-
-ambari-server-log4j:
-  file.managed:
-    - name: /etc/ambari-server/conf/log4j.properties
-    - source: {{ ambari.server.log4j }}
-    - template: jinja
-    - user: {{ ambari_user }}
-    - group: root
-    - permission: 0644
-
-ambari-server-jass:
-  file.managed:
-    - name: /etc/ambari-server/conf/krb5JAASLogin.conf
-    - source: salt://ambari/server/files/krb5JAASLogin.conf
-    - template: jinja
-    - user: {{ ambari_user }}
-    - group: root
-    - permission: 0644

@@ -1,34 +1,16 @@
 ambari:
 
-  version: 1.7.0
-
-  ## Specific configuration for Ambari repositories
-  repo:
-    # list of repositories to deploy
-    versions:
-      - 1.7.0
-      - 2.0.0
-      - 2.0.1
-      - 2.0.2
-      - 2.1
-      - 2.1.1
-      - 2.1.2
-      - 2.1.2.1
-      - 2.2.0.0
-      - 2.2.1.0
-      - 2.2.1.1
-      - 2.2.2.0
-      - 2.4.0.1
-      - 2.4.1.0
+  version: 2.4.1.0
 
   ## Specific configuration for Ambari Agent
   agent:
     ## Should the agent be started and enabled when deployed
     ## if false, status/state unchanged
     start_service: True
+
     ## All of the following is used for /etc/ambari-agent/conf/ambari-agent.ini
     server:
-      hostname: localhost
+      hostname: ambari-master
       url_port: 8440
       secured_url_port: 8441
     agent:
@@ -39,12 +21,12 @@ ambari:
       data_cleanup_max_age: 2592000
       data_cleanup_max_size_MB: 100
       ping_port: 8670
+      alert_kinit_timeout: 14400000
       cache_dir: /var/lib/ambari-agent/cache
       tolerate_download_failures: true
       run_as_user: root
       parallel_execution: 0
       alert_grace_period: 5
-      alert_kinit_timeout: 14400000
       system_resource_overrides: /etc/resource_overrides
     command:
       maxretries: 2
@@ -65,7 +47,6 @@ ambari:
       log_lines_count: 300
     logging:
       syslog_enabled: 0
-
   ## Specific configuration for Ambari Server
   server:
     ## Should the ambari server be automatically started and enabled
@@ -74,8 +55,6 @@ ambari:
 
     # log4j template
     log4j: salt://ambari/server/files/log4j.properties
-    log:
-      dir: /var/log/ambari-server
 
     ## server configuration in ambari.properties
     agent:
@@ -83,10 +62,6 @@ ambari:
         install:
           task:
             timeout: 1800
-      stack:
-        retry:
-          on_repo_unavailability: false
-          tries: 5
       task:
         timeout: 900
       threadpool:
@@ -97,27 +72,8 @@ ambari:
     ambari:
       python:
         wrap: ambari-python-wrap
-      ldap:
-        isConfigured: false
     api:
       authenticate: true
-
-    authentication:
-      ldap:
-        baseDn:
-        bindAnonymously:
-        dnAttribute:
-        groupMembershipAttr:
-        groupNamingAttr:
-        groupObjectClass:
-        managerDn:
-        managerPassword: /etc/ambari-server/conf/ldap-password.dat
-        primaryUrl:
-        secondaryUrl:
-        referral:
-        usernameAttribute:
-        userObjectClass:
-        useSSL:
     bootstrap:
       dir: /var/run/ambari-server/bootstrap
       script: /usr/lib/python2.6/site-packages/ambari_server/bootstrap.py
@@ -133,83 +89,24 @@ ambari:
     custom:
       action:
         definitions: /var/lib/ambari-server/resources/custom_action_definitions
-    http:
-      strict_transport_security: max-age=31536000
-      x_xss_protection: 1; mode=block
-      x_frame_options: DENY
     java:
-      home: /usr/jdk64/jdk1.8.0_60
-      releases: jdk1.8,jdk1.7
-    jce:
-      name: jce_policy-8.zip
-      download:
-        supported: True
-    jdk:
-      name: jdk-8u60-linux-x64.tar.gz
-      download:
-        supported: True
-    jdk1_6:
-      desc: Oracle JDK 1.6
-      dest_file: jdk-6u31-linux-x64.bin
-      home: /usr/jdk64/
-      jcpol_file: jce_policy-6.zip
-      jcpol_url: http://public-repo-1.hortonworks.com/ARTIFACTS/jce_policy-6.zip
-      re: Creating (jdk.*)/jre
-      url: http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-6u31-linux-x64.bin
-    jdk1_7:
-      desc: Oracle JDK 1.7 + Java Cryptography Extension (JCE) Policy Files 7
-      dest_file: jdk-7u67-linux-x64.tar.gz
-      home: /usr/jdk64/
-      jcpol_file: UnlimitedJCEPolicyJDK7.zip
-      jcpol_url: http://public-repo-1.hortonworks.com/ARTIFACTS/UnlimitedJCEPolicyJDK7.zip
-      re: (jdk.*)/jre
-      url: http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-7u67-linux-x64.tar.gz
-    jdk1_8:
-      desc: Oracle JDK 1.8 + Java Cryptography Extension (JCE) Policy Files 8
-      dest_file: jdk-8u60-linux-x64.tar.gz
-      home: /usr/jdk64/
-      jcpol_file: jce_policy-8.zip
-      jcpol_url: http://public-repo-1.hortonworks.com/ARTIFACTS/jce_policy-8.zip
-      re: (jdk.*)/jre
-      url: http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-8u60-linux-x64.tar.gz
+      home: /usr/lib/java/jdk1.8.0_74
+      releases: jdk1.8
 
-    kerberos:
-      keytab:
-        cache:
-          dir: /var/lib/ambari-server/data/cache
-        path: /etc/security/keytabs/ambari.server.keytab
-      principal: ambari-server@EXAMPLE.COM
     metadata:
       path: /var/lib/ambari-server/resources/stacks
     recommendations:
       dir: /var/run/ambari-server/stack-recommendations
-    recovery:
-      type: AUTO_START
-      enabled_components: METRICS_COLLECTOR
-      lifetime_max_count: 1024
     resources:
       dir: /var/lib/ambari-server/resources
-    rolling:
-      upgrade:
-        min:
-          stack: HDP-2.2
-        max:
-          stack:
-        skip:
-          packages:
-            prefixes:
     security:
       server:
         keys_dir: /var/lib/ambari-server/keys
-        disabled:
-          protocols:
-          ciphers:
     server:
       connection:
         max:
           idle:
             millis: 900000
-      ecCacheSizeValue:
       execution:
         scheduler:
           isClustered: false
@@ -225,12 +122,6 @@ ambari:
         session:
           inactive_timeout: 1800
       jdbc:
-        connection_pool:
-          acquisition_size:
-          max_age:
-          max_idle_time:
-          max_idle_time_excess:
-          idle_test_interval:
         database: postgres
         database_name: ambari
         driver: org.postgresql.Driver
@@ -252,48 +143,19 @@ ambari:
         type: local
       stages:
         parallel: true
-      task:
-        timeout: 1200
       tmp:
-        dir: /var/lib/ambari-server/data/tmp
+        dir: /var/lib/ambari-server/tmp
       version:
         file: /var/lib/ambari-server/resources/version
     shared:
       resources:
         dir: /usr/lib/ambari-server/lib/ambari_commons/resources
-    skip:
-      service:
-        checks: false
-    ssl:
-      trustStore:
-        password:
-        path:
-        type:
     stackadvisor:
       script: /var/lib/ambari-server/resources/scripts/stack_advisor.py
     ulimit:
       open:
         files: 10000
-    user:
-      inactivity:
-        timeout:
-          default: 0
-          role:
-            readonly:
-              default: 0
     views:
-      ambari:
-        request:
-          connect:
-            timeout:
-              millis: 5000
-          read:
-            timeout:
-              millis: 10000
-      http:
-        strict_transport_security: max-age=31536000
-        x_xss_protection: 1; mode=block
-        x_frame_options: SAMEORIGIN
       request:
         connect:
           timeout:

@@ -18,11 +18,15 @@ deb http://repo.saltstack.com/apt/ubuntu/14.04/amd64/latest trusty main
 
 ## Install Ambari on cluster
 
-- Use github.com/trsmitht/ambari-formulas
-- Run repos on every node
+### Prep
+
+- Put ambari-master entry into all /etc/hosts
+
+### Run all the salt states
+
+- Run repo on every node
 - Run agent on every node
 - Run server on master node
-- Put ambari-master entry into all /etc/hosts
 
 ## Run ambari-setup
 
